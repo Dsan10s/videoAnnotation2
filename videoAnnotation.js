@@ -566,13 +566,16 @@ function getRelMouseX(This, e){
 //this function creates the the tick under the progressbar and gives it the left position
 //the width of the tick is controlled under document.ready() in the mousemove function
 var startDragX; //relative to the page
-var drag_mouseup = true; //important when calculating the width of the dragtick
+var drag_mouseup1 = true; //important when calculating the width of the dragtick
+var drag_mouseup2 = true; //important when calculating the width of the dragtick
 function dragRangeOn(){
 	$("#progressbar").mousedown(function(e){
+		console.log("mousedown");
 		if(!timeStartFocused){
 			if (drag_on && !timeEndFocused){
+				console.log("rangeTick1 should show")
 				startDragX = mouseX - progressbarOffsetX();
-				drag_mouseup = false; 
+				drag_mouseup1 = false; 
 				var currentSec = mouseXtoSec(this, e);
 				comment_btn();
 
@@ -580,16 +583,16 @@ function dragRangeOn(){
 				var tickLoc = calculateTickLoc(currentSec);
 				var tickLocStr = tickLoc.toString() + "px";
 				
-				$("#rangeTick").css("left", tickLocStr);
-				$("#rangeTick").css("width", "2px")
-				$("#rangeTick").show();	
+				$("#rangeTick1").css("left", tickLocStr);
+				$("#rangeTick1").css("width", "2px")
+				$("#rangeTick1").show();	
 			}
 		}
 
 	});
 	$("#progressbar").mouseup(function(e){
 		if(drag_on){
-			drag_mouseup = true;
+			drag_mouseup1 = true;
 			var currentSec = mouseXtoSec(this, e);
 			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
 				$("#comment_timeEnd").val(calculateTime(currentSec));
@@ -598,7 +601,7 @@ function dragRangeOn(){
 				timeStartFocused_adjustTick(this, e);
 
 				// var tickLocStr = currentX.toString() + "px"; 
-				// $("#rangeTick").css("left", tickLocStr);
+				// $("#rangeTick1").css("left", tickLocStr);
 
 			}else{
 				if($("#comment_time").val() == calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
@@ -615,11 +618,13 @@ function dragRangeOn(){
 		timeEndFocused = false;
 	});
 
-	$("#progressbar").mousedown(function(e){
+	$(".tickmark_holder").mousedown(function(e){
+		console.log("mousedown");
 		if(!timeStartFocused){
 			if (drag_on && !timeEndFocused){
+				console.log("rangeTick2 should show")
 				startDragX = mouseX - progressbarOffsetX();
-				drag_mouseup = false; 
+				drag_mouseup2 = false; 
 				var currentSec = mouseXtoSec(this, e);
 				comment_btn();
 
@@ -627,16 +632,16 @@ function dragRangeOn(){
 				var tickLoc = calculateTickLoc(currentSec);
 				var tickLocStr = tickLoc.toString() + "px";
 				
-				$("#rangeTick").css("left", tickLocStr);
-				$("#rangeTick").css("width", "2px")
-				$("#rangeTick").show();	
+				$("#rangeTick2").css("left", tickLocStr);
+				$("#rangeTick2").css("width", "2px")
+				$("#rangeTick2").show();	
 			}
 		}
 
 	});
-	$("#progressbar").mouseup(function(e){
+	$(".tickmark_holder").mouseup(function(e){
 		if(drag_on){
-			drag_mouseup = true;
+			drag_mouseup2 = true;
 			var currentSec = mouseXtoSec(this, e);
 			if(timeEndFocused){ //if the timeEnd input is focused, adjust tick width on this click
 				$("#comment_timeEnd").val(calculateTime(currentSec));
@@ -645,7 +650,7 @@ function dragRangeOn(){
 				timeStartFocused_adjustTick(this, e);
 
 				// var tickLocStr = currentX.toString() + "px"; 
-				// $("#rangeTick").css("left", tickLocStr);
+				// $("#rangeTick1").css("left", tickLocStr);
 
 			}else{
 				if($("#comment_time").val() == calculateTime(currentSec)){ //if the two time entries are the same when clicking on progressbar, only print the time in the first time value box (creates a single tick)
@@ -665,8 +670,10 @@ function dragRangeOn(){
 
 
 function hideRangeTick(){
-	$("#rangeTick").hide();
-	$("#rangeTick").css("width", "2px")	
+	$("#rangeTick1").hide();
+	$("#rangeTick1").css("width", "2px");	
+	$("#rangeTick2").hide();
+	$("#rangeTick2").css("width", "2px");
 }
 
 function dragWidthCalc(){
@@ -679,17 +686,23 @@ function dragWidthCalc(){
 		mouseX = e.pageX;
 		mouseY = e.pageY;
 		// if(mouseX > startDragX && !drag_mouseup){
-        //   $("#rangeTick").css("width", mouseX-startDragX-progressbarOffsetX());
-          // $("#rangeTick").css("max-width", $(".tickmark_holder").width() - tickLoc);
+        //   $("#rangeTick1").css("width", mouseX-startDragX-progressbarOffsetX());
+          // $("#rangeTick1").css("max-width", $(".tickmark_holder").width() - tickLoc);
         // }else if(mouseX <= startDragX && !drag_mouseup){
-        //   $("#rangeTick").css("left", mouseX - startDragX + progressbarOffsetX());
-        //   $("#rangeTick").css("width", startDragX - mouseX);
+        //   $("#rangeTick1").css("left", mouseX - startDragX + progressbarOffsetX());
+        //   $("#rangeTick1").css("width", startDragX - mouseX);
         // }
-		if(startDragX > 0 && !drag_mouseup){
+		if(startDragX > 0 && !drag_mouseup1){
 			drag_on = true;
 			dragWidth = mouseX-startDragX - progressbarOffsetX();
 			var widthStr = dragWidth.toString() + "px";
-			$("#rangeTick").css("width", widthStr);
+			$("#rangeTick1").css("width", widthStr);
+		}
+		if(startDragX > 0 && !drag_mouseup2){
+			drag_on = true;
+			dragWidth = mouseX-startDragX - progressbarOffsetX();
+			var widthStr = dragWidth.toString() + "px";
+			$("#rangeTick2").css("width", widthStr);
 		}
 	}); 
 }
@@ -700,13 +713,13 @@ function timeEndFocused_adjustTickWidth(This, e){
 	var currentX = calculateTickLoc(currentSec);
 	dragWidth = currentX-startDragX;
 	var widthStr = dragWidth.toString() + "px";
-	$("#rangeTick").css("width", widthStr);
+	$("#rangeTick1").css("width", widthStr);
 }
 
 function timeStartFocused_adjustTick(This, e){
 	var currentSec = mouseXtoSec(This, e);
 	startDragX = calculateTickLoc(currentSec);
-	var currentTickX = parseInt($("#rangeTick").css("left").substr(0, $("#rangeTick").css("left").length-2));
+	var currentTickX = parseInt($("#rangeTick1").css("left").substr(0, $("#rangeTick1").css("left").length-2));
 	var xDiff = startDragX - currentTickX;
 
 	if(xDiff < 0){ //new X location is left of original, width increases 
@@ -715,11 +728,11 @@ function timeStartFocused_adjustTick(This, e){
 		dragWidth -= Math.abs(xDiff);
 	}
 	var widthStr = dragWidth.toString() + "px";
-	$("#rangeTick").css("width", widthStr);
+	$("#rangeTick1").css("width", widthStr);
 	//startDragX -= Math.abs(moveX);
 	$("#comment_time").val(calculateTime(currentSec));
 	var tickLocStr = startDragX.toString() + "px";
-	$("#rangeTick").css("left", tickLocStr);
+	$("#rangeTick1").css("left", tickLocStr);
 
 }
 
@@ -760,14 +773,14 @@ function createTickPopover(ID){
         if (commentObj[i].ID == ID){
           	var tickContent = commentObj[i].text;
           	var tickTitle = commentObj[i].userName;
-          	$("#tickmark" + ID).popover({trigger: "click", placement: "bottom",title: tickTitle, content: tickContent});
+          	$("#tickmark" + ID).popover({trigger: "hover", placement: "bottom",title: tickTitle, content: tickContent});
         }
     }
 }
 
 //This function should be called the the page is loading
 function addAllTicks(){
-	$(".tickmark_holder").html("");
+	$(".tickmark_holder").html("<div id = 'rangeTick2'></div>");
 	var xLoc, ID, width, html;
 	for(var num = 0; num < commentObj.length; num++){
 		xLoc = calculateTickLoc(commentObj[num].timeSec);
